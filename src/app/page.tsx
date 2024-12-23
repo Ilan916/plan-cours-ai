@@ -1,5 +1,4 @@
 'use client';
-import { useState } from 'react';
 import useGenerateCourse from '@/app/hooks/useGenerateCourse';
 import useGenerateQuiz from '@/app/hooks/useGenerateQuiz';
 import CourseForm from '@/app/components/coursForm';

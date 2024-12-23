@@ -40,10 +40,15 @@ export default function useGenerateCourse(): UseGenerateCourseReturn {
         throw new Error('Erreur lors de la génération du cours');
       }
 
-      const data = await response.json();
+      const data: Course = await response.json(); // Typage strict des données de réponse
       setCourse(data); // Met à jour les données du cours
-    } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue');
+    } catch (err: unknown) {
+      // Vérification du type de l'erreur
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Une erreur inconnue est survenue');
+      }
     } finally {
       setLoading(false);
     }
