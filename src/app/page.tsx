@@ -1,38 +1,14 @@
 'use client';
 import { useState } from 'react';
 import useGenerateCourse from '@/app/hooks/useGenerateCourse';
+import useGenerateQuiz from '@/app/hooks/useGenerateQuiz';
 import CourseForm from '@/app/components/coursForm';
 import InfoBar from '@/app/components/InfoBar';
 import SectionList from '@/app/components/SectionList';
 
 export default function Home() {
   const { generateCourse, course, loading, error } = useGenerateCourse();
-  const [quizzes, setQuizzes] = useState<{ [key: string]: any }>({}); // Stocker les quiz par section
-
-  const handleGenerateQuiz = async (objectives: string[], sectionTitle: string) => {
-    try {
-      const response = await fetch('/api/generateQuiz', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          objectives,
-          sectionTitle,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erreur lors de la génération du quiz pour "${sectionTitle}"`);
-      }
-
-      const data = await response.json();
-      setQuizzes((prev) => ({ ...prev, [sectionTitle]: data })); // Stocker le quiz par section
-    } catch (error : any) {
-      console.error(error);
-      alert(`Erreur : ${error.message}`);
-    }
-  };
+  const { quizzes, generateQuiz, loadingSections } = useGenerateQuiz();
 
   // Fonction pour exporter un quiz en JSON
   const handleExportQuiz = (quiz: any, sectionTitle: string) => {
@@ -78,7 +54,11 @@ export default function Home() {
           </div>
 
           <div className="max-w-4xl mx-auto mt-4">
-            <SectionList sections={course.sections} onGenerateQuiz={handleGenerateQuiz} />
+            <SectionList
+              sections={course.sections}
+              onGenerateQuiz={generateQuiz}
+              loadingSections={loadingSections}
+            />
           </div>
 
           {/* Afficher les quiz générés */}

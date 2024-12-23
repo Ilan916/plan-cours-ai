@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 interface Section {
   title: string;
   description: string;
@@ -8,23 +6,11 @@ interface Section {
 
 interface SectionListProps {
   sections: Section[];
-  onGenerateQuiz: (objectives: string[], sectionTitle: string) => Promise<void>; // Callback pour générer un quiz
+  onGenerateQuiz: (objectives: string[], sectionTitle: string) => Promise<void>;
+  loadingSections: string[]; // Gestion des sections en cours de génération
 }
 
-export default function SectionList({ sections, onGenerateQuiz }: SectionListProps) {
-  const [loadingIndexes, setLoadingIndexes] = useState<number[]>([]); // Gérer les sections en cours de génération
-
-  const handleGenerateQuiz = async (objectives: string[], sectionTitle: string, index: number) => {
-    setLoadingIndexes((prev) => [...prev, index]); // Marquer l'index comme en cours de chargement
-    try {
-      await onGenerateQuiz(objectives, sectionTitle);
-    } catch (error) {
-      alert(`Erreur lors de la génération du quiz pour "${sectionTitle}"`);
-    } finally {
-      setLoadingIndexes((prev) => prev.filter((i) => i !== index)); // Retirer l'index après la génération
-    }
-  };
-
+export default function SectionList({ sections, onGenerateQuiz, loadingSections }: SectionListProps) {
   return (
     <div className="bg-white shadow-md rounded-md p-6">
       <h2 className="text-xl font-bold text-gray-800 mb-4">Liste des Sections</h2>
@@ -39,19 +25,15 @@ export default function SectionList({ sections, onGenerateQuiz }: SectionListPro
               ))}
             </ul>
             <button
-              onClick={() => handleGenerateQuiz(section.objectives, section.title, index)}
-              disabled={loadingIndexes.includes(index)} // Désactiver le bouton si en cours de génération
-              className={`mt-4 px-4 py-2 text-white font-semibold rounded-md flex items-center justify-center ${
-                loadingIndexes.includes(index)
+              onClick={() => onGenerateQuiz(section.objectives, section.title)}
+              disabled={loadingSections.includes(section.title)} // Désactiver le bouton si en cours de génération
+              className={`mt-4 px-4 py-2 text-white font-semibold rounded-md ${
+                loadingSections.includes(section.title)
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-blue-500 hover:bg-blue-600'
               }`}
             >
-              {loadingIndexes.includes(index) ? (
-                <span className="loader mr-2 border-t-white"></span> // Loader visuel
-              ) : (
-                'Générer Quiz'
-              )}
+              {loadingSections.includes(section.title) ? 'Génération...' : 'Générer Quiz'}
             </button>
           </li>
         ))}
