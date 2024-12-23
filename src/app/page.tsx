@@ -6,12 +6,21 @@ import CourseForm from '@/app/components/coursForm';
 import InfoBar from '@/app/components/InfoBar';
 import SectionList from '@/app/components/SectionList';
 
+// Interface pour le typage des quiz
+interface Quiz {
+  questions: {
+    question: string;
+    options: string[];
+    correctAnswer: string;
+  }[];
+}
+
 export default function Home() {
   const { generateCourse, course, loading, error } = useGenerateCourse();
   const { quizzes, generateQuiz, loadingSections } = useGenerateQuiz();
 
   // Fonction pour exporter un quiz en JSON
-  const handleExportQuiz = (quiz: any, sectionTitle: string) => {
+  const handleExportQuiz = (quiz: Quiz, sectionTitle: string) => {
     const jsonBlob = new Blob([JSON.stringify(quiz, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(jsonBlob);
 
@@ -70,11 +79,11 @@ export default function Home() {
                 {quiz?.questions && Array.isArray(quiz.questions) ? (
                   <>
                     <ul className="mt-2 list-decimal list-inside">
-                      {quiz.questions.map((q: any, index: number) => (
+                      {quiz.questions.map((q, index) => (
                         <li key={index} className="mb-4">
                           <p className="text-gray-800 font-medium">{q.question}</p>
                           <ul className="mt-2 list-disc list-inside pl-6">
-                            {q.options.map((option: string, i: number) => (
+                            {q.options.map((option, i) => (
                               <li key={i} className="text-gray-600">
                                 {option}
                               </li>
@@ -90,7 +99,7 @@ export default function Home() {
 
                     {/* Bouton Exporter en JSON */}
                     <button
-                      onClick={() => handleExportQuiz(quiz, sectionTitle)}
+                      onClick={() => handleExportQuiz(quiz as Quiz, sectionTitle)}
                       className="mt-4 px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600"
                     >
                       Exporter le Quiz en JSON

@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
               - "options" : un tableau de 4 propositions de réponse
               - "correctAnswer" : la réponse correcte parmi les propositions.
             Retourne le JSON complet au format spécifié.
+
+            tout le contenue doit etre écrit en français
           `,
         },
       ],

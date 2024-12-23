@@ -1,8 +1,19 @@
+interface CourseData {
+  topic: string;
+  level: string;
+  duration: number;
+  sections: {
+    title: string;
+    description: string;
+    objectives: string[];
+  }[];
+}
+
 interface InfoBarProps {
   topic: string;
   level: string;
   duration: number;
-  courseData: any; // Les données complètes du cours à exporter
+  courseData: CourseData; // Typage strict des données du cours
 }
 
 export default function InfoBar({ topic, level, duration, courseData }: InfoBarProps) {
